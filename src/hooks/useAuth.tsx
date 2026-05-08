@@ -46,13 +46,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const register = useCallback(async (data: any) => {
-    const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    });
-    return res.json();
-  }, []);
+  try {
+    const result = await authService.registerWithEmail(
+      data.email,
+      data.password,
+      data.name
+    );
+
+    return {
+      success: true,
+      user: result
+    };
+  } catch (error: any) {
+    return {
+      error: error.message || "Registration failed"
+    };
+  }
+}, []);
+        
 
   const login = useCallback(async (data: any) => {
     const res = await fetch("/api/auth/login", {

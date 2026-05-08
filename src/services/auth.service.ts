@@ -30,39 +30,43 @@ export class AuthService {
   }
 
   async signInWithGoogle(): Promise<void> {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  }
+  const provider = new GoogleAuthProvider();
+  await signInWithPopup(auth, provider);
+}
 
-  async signOut(): Promise<void> {
-    await firebaseSignOut(auth);
-  }
+async registerWithEmail(
+  email: string,
+  password: string,
+  name: string
+): Promise<UserProfile> {
 
-  subscribeToAuth(callback: (user: FirebaseUser | null) => void) {
-    return onAuthStateChanged(auth, callback);
-  }
+  const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth");
 
-  async ensureUserProfile(firebaseUser: FirebaseUser): Promise<UserProfile> {
-    const userDocRef = doc(db, "users", firebaseUser.uid);
-    const docSnap = await getDoc(userDocRef);
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
 
-    if (docSnap.exists()) {
-      return docSnap.data() as UserProfile;
-    }
+  const firebaseUser = userCredential.user;
 
-    const newUser: UserProfile = {
-      userId: firebaseUser.uid,
-      email: firebaseUser.email || "",
-      displayName: firebaseUser.displayName || "FinFlex User",
-      photoURL: firebaseUser.photoURL || "",
-      role: 'user',
-      createdAt: Date.now(),
-    };
+  await updateProfile(firebaseUser, {
+    displayName: name
+  });
 
-    await setDoc(userDocRef, newUser);
-    return newUser;
-  }
+  const newUser: UserProfile = {
+    userId: firebaseUser.uid,
+    email: firebaseUser.email || "",
+    displayName: name,
+    photoURL: "",
+    role: "user",
+    createdAt: Date.now(),
+  };
 
+  await setDoc(doc(db, "users", firebaseUser.uid), newUser);
+
+  return newUser;
+}
   async updatePassword(newPassword: string): Promise<void> {
     const user = auth.currentUser;
     if (!user) throw new Error("No user authenticated");
