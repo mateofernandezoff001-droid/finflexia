@@ -1,0 +1,6 @@
+{
+  "name": "FinFlex Pro | Professional Financial Intelligence",
+  "description": "Multi-platform fintech terminal with AI-powered metrics, real-time market feeds, secure multi-user architecture, and professional audit capabilities.",
+  "requestFramePermissions": ["notifications"],
+  "majorCapabilities": ["pwa", "realtime", "multi-user"]
+}

@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Identity and preferences for the financial platform",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "role"]
+    },
+    "Wallet": {
+      "title": "Virtual Wallet",
+      "description": "Stores user balances across different currencies",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "balance": { "type": "number" },
+        "currency": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "balance", "currency"]
+    },
+    "Transaction": {
+      "title": "Financial Transaction",
+      "description": "Record of a simulated payment, transfer, or investment action",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense", "transfer", "investment"] },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "description": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "metadata": { "type": "object" }
+      },
+      "required": ["userId", "type", "amount", "timestamp"]
+    },
+    "Portfolio": {
+      "title": "Investment Portfolio",
+      "description": "Summary of active investments",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "totalValue": { "type": "number" },
+        "performance": { "type": "number" },
+        "assets": { "type": "array" }
+      },
+      "required": ["userId", "totalValue"]
+    },
+    "AIInsight": {
+      "title": "Financial AI Insight",
+      "description": "Generated recommendations for the user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "insight": { "type": "string" },
+        "type": { "type": "string", "enum": ["saving", "spending", "investment"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "insight", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "users/{userId}/wallets/{walletId}": {
+      "schema": "Wallet",
+      "description": "Multi-currency wallets per user"
+    },
+    "users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "User transaction history"
+    },
+    "users/{userId}/portfolios/main": {
+      "schema": "Portfolio",
+      "description": "Primary user investment portfolio"
+    },
+    "users/{userId}/insights/{insightId}": {
+      "schema": "AIInsight",
+      "description": "AI-generated financial insights"
+    }
+  }
+}
